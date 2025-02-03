@@ -4,6 +4,108 @@ Terraform module for calculating subnet addresses under a particular CIDR prefix
 
 This is a module is fork of https://github.com/drewmullen/terraform-cidr-subnets which is a fork of https://github.com/hashicorp/terraform-cidr-subnets - with some modifications to allow for the allocation of subnets from the end of the base CIDR block.
 
+## Usage
+
+```hcl
+module "this" {
+  source = "../../"
+
+  base_cidr_block = "10.0.0.0/16"
+
+  networks = [
+    {
+      name    = "private/foo"
+      netmask = 18
+    },
+    {
+      name    = "private/bar"
+      netmask = 18
+    },
+    {
+      name    = "private/baz"
+      netmask = 18
+    },
+    {
+      name    = "public/foo"
+      netmask = 20
+    },
+    {
+      name    = "public/bar"
+      netmask = 20
+    },
+    {
+      name    = "public/baz"
+      netmask = 20
+    }
+  ]
+}
+```
+
+## Outputs
+```
+this = {
+  "base_cidr_block" = "10.0.0.0/16"
+  "grouped_by_separator" = {
+    "private" = {
+      "bar" = "10.0.64.0/18"
+      "baz" = "10.0.128.0/18"
+      "foo" = "10.0.0.0/18"
+    }
+    "public" = {
+      "bar" = "10.0.208.0/20"
+      "baz" = "10.0.224.0/20"
+      "foo" = "10.0.192.0/20"
+    }
+  }
+  "network_cidr_blocks" = tomap({
+    "private/bar" = "10.0.64.0/18"
+    "private/baz" = "10.0.128.0/18"
+    "private/foo" = "10.0.0.0/18"
+    "public/bar" = "10.0.208.0/20"
+    "public/baz" = "10.0.224.0/20"
+    "public/foo" = "10.0.192.0/20"
+  })
+  "networks" = tolist([
+    {
+      "bits" = 2
+      "cidr_block" = "10.0.0.0/18"
+      "name" = "private/foo"
+      "netmask" = 18
+    },
+    {
+      "bits" = 2
+      "cidr_block" = "10.0.64.0/18"
+      "name" = "private/bar"
+      "netmask" = 18
+    },
+    {
+      "bits" = 2
+      "cidr_block" = "10.0.128.0/18"
+      "name" = "private/baz"
+      "netmask" = 18
+    },
+    {
+      "bits" = 4
+      "cidr_block" = "10.0.192.0/20"
+      "name" = "public/foo"
+      "netmask" = 20
+    },
+    {
+      "bits" = 4
+      "cidr_block" = "10.0.208.0/20"
+      "name" = "public/bar"
+      "netmask" = 20
+    },
+    {
+      "bits" = 4
+      "cidr_block" = "10.0.224.0/20"
+      "name" = "public/baz"
+      "netmask" = 20
+    },
+  ])
+}
+```
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
